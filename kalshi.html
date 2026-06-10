@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalshi Positions — Kata's Page</title>
+    <meta name="author" content="Katalina Torres">
+</head>
+
+<body style="background-image: url(images/pinkaurabckgr1.jpg);
+    background-repeat: repeat;
+    background-position: center;
+    background-size: cover;
+    max-width: 1000px;
+    background-attachment: fixed;
+    margin: auto;
+    padding: 16px;">
+
+<header style="padding-top: 25%;
+    background-image: url(images/pinkbohoheader1.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    position: relative;">
+</header>
+
+<nav id="Top">
+    <a href="index.html">Home</a>
+    <a href="about.html">About Me</a>
+    <a href="resume.html">Resume</a>
+    <a href="kalshi.html">Kalshi</a>
+</nav>
+
+<main>
+    <h1 style="text-align: center; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+        My Kalshi Positions
+    </h1>
+
+    <hr style="width: 60%; height: 2px; background-color: indianred;">
+
+    <!-- Login form -->
+    <div id="auth-section" style="text-align: center; margin: 32px 0; font-family: 'Times New Roman', Times, serif;">
+        <p style="font-size: 18px; color: #555;">Sign in with your Kalshi account to view live positions.</p>
+        <form id="login-form" style="display: inline-block; text-align: left;">
+            <div style="margin-bottom: 14px;">
+                <label style="display: block; font-size: 16px; margin-bottom: 4px;">Email</label>
+                <input type="email" id="kalshi-email" required autocomplete="username"
+                    style="width: 280px; padding: 8px 12px; font-size: 16px;
+                           border: 1px solid #ccc; border-radius: 6px;" />
+            </div>
+            <div style="margin-bottom: 18px;">
+                <label style="display: block; font-size: 16px; margin-bottom: 4px;">Password</label>
+                <input type="password" id="kalshi-password" required autocomplete="current-password"
+                    style="width: 280px; padding: 8px 12px; font-size: 16px;
+                           border: 1px solid #ccc; border-radius: 6px;" />
+            </div>
+            <button type="submit"
+                style="background-color: indianred; color: white; border: none;
+                       padding: 10px 28px; font-size: 16px; border-radius: 6px; cursor: pointer;
+                       font-family: 'Times New Roman', Times, serif; width: 100%;">
+                Load Positions
+            </button>
+        </form>
+        <p id="auth-error"
+           style="color: indianred; margin-top: 14px; font-family: 'Times New Roman', Times, serif;
+                  font-size: 16px; display: none; max-width: 360px; margin-left: auto; margin-right: auto;"></p>
+    </div>
+
+    <!-- Positions display -->
+    <div id="positions-section" style="display: none;">
+
+        <div id="summary"
+             style="background-color: rgba(255,255,255,0.75); border-radius: 10px;
+                    padding: 16px 24px; margin-bottom: 24px;
+                    font-family: 'Times New Roman', Times, serif; font-size: 18px;
+                    text-align: center;">
+        </div>
+
+        <div id="no-positions"
+             style="display: none; text-align: center;
+                    font-family: 'Times New Roman', Times, serif; font-size: 18px;
+                    background-color: rgba(255,255,255,0.75); padding: 32px; border-radius: 10px;">
+            No open positions found.
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table id="positions-table"
+                   style="width: 100%; border-collapse: collapse;
+                          background-color: rgba(255,255,255,0.85); border-radius: 10px;
+                          font-family: 'Times New Roman', Times, serif; overflow: hidden;">
+                <thead>
+                    <tr style="background-color: indianred; color: white;">
+                        <th style="padding: 12px 16px; text-align: left;">Market</th>
+                        <th style="padding: 12px 16px; text-align: center;">Side</th>
+                        <th style="padding: 12px 16px; text-align: right;">Contracts</th>
+                        <th style="padding: 12px 16px; text-align: right;">Value</th>
+                        <th style="padding: 12px 16px; text-align: right;">Realized P&amp;L</th>
+                    </tr>
+                </thead>
+                <tbody id="positions-body"></tbody>
+            </table>
+        </div>
+
+        <div style="text-align: center; margin-top: 24px;">
+            <button onclick="loadPositions()"
+                    style="background-color: indianred; color: white; border: none;
+                           padding: 10px 24px; font-size: 16px; border-radius: 6px; cursor: pointer;
+                           margin-right: 12px; font-family: 'Times New Roman', Times, serif;">
+                Refresh
+            </button>
+            <button onclick="signOut()"
+                    style="background-color: #888; color: white; border: none;
+                           padding: 10px 24px; font-size: 16px; border-radius: 6px; cursor: pointer;
+                           font-family: 'Times New Roman', Times, serif;">
+                Sign Out
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading indicator -->
+    <div id="loading"
+         style="display: none; text-align: center; margin: 32px 0;
+                font-family: 'Times New Roman', Times, serif; font-size: 20px; color: indianred;">
+        Loading positions&hellip;
+    </div>
+
+    <hr style="width: 60%; height: 2px; background-color: indianred; margin-top: 40px;">
+</main>
+
+<footer style="padding-bottom: 25%;
+    background-image: url(images/pinkbohoheader1.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    position: relative;">
+    <a href="#Top">
+        <img src="images/toparrowbutton.png" alt="arrow pointing up">
+    </a>
+    <a href="contact.html">Contact Me</a>
+</footer>
+
+<script>
+    var KALSHI_API = 'https://trading-api.kalshi.com/trade-api/v2';
+
+    async function doLogin(email, password) {
+        var res = await fetch(KALSHI_API + '/log_in', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, password: password })
+        });
+        if (!res.ok) {
+            var err = await res.json().catch(function() { return {}; });
+            throw new Error(err.message || 'Login failed (' + res.status + ')');
+        }
+        var data = await res.json();
+        return data.token;
+    }
+
+    async function loadPositions() {
+        var token = sessionStorage.getItem('kalshi_token');
+        if (!token) return;
+
+        setLoading(true);
+        clearError();
+
+        try {
+            var res = await fetch(KALSHI_API + '/portfolio/positions', {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+
+            if (res.status === 401) {
+                sessionStorage.removeItem('kalshi_token');
+                showAuthSection();
+                showError('Session expired — please sign in again.');
+                return;
+            }
+            if (!res.ok) throw new Error('Could not load positions (' + res.status + ')');
+
+            var data = await res.json();
+            renderPositions(data);
+            document.getElementById('positions-section').style.display = 'block';
+            document.getElementById('auth-section').style.display = 'none';
+
+        } catch (e) {
+            var msg = e.message;
+            if (e instanceof TypeError) {
+                msg = 'Network error — the Kalshi API may block direct browser requests. '
+                    + 'Try hosting this page on a web server or using a CORS proxy.';
+            }
+            showError(msg);
+            if (!sessionStorage.getItem('kalshi_token')) showAuthSection();
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    function renderPositions(data) {
+        var positions = (data.market_positions || []).filter(function(p) { return p.position !== 0; });
+        var tbody = document.getElementById('positions-body');
+        tbody.innerHTML = '';
+
+        if (positions.length === 0) {
+            document.getElementById('no-positions').style.display = 'block';
+            document.getElementById('positions-table').style.display = 'none';
+        } else {
+            document.getElementById('no-positions').style.display = 'none';
+            document.getElementById('positions-table').style.display = 'table';
+
+            var totalValue = 0;
+            var totalPnl = 0;
+
+            positions.forEach(function(pos, i) {
+                var side = pos.position > 0 ? 'YES' : 'NO';
+                var contracts = Math.abs(pos.position);
+                var value = pos.value != null ? (pos.value / 100).toFixed(2) : null;
+                var pnl = pos.realized_pnl != null ? (pos.realized_pnl / 100).toFixed(2) : null;
+
+                if (pos.value != null) totalValue += pos.value;
+                if (pos.realized_pnl != null) totalPnl += pos.realized_pnl;
+
+                var sideColor = side === 'YES' ? '#2e7d32' : '#c62828';
+                var pnlColor = pnl != null ? (parseFloat(pnl) >= 0 ? '#2e7d32' : '#c62828') : '#555';
+
+                var tr = document.createElement('tr');
+                tr.style.backgroundColor = i % 2 === 0 ? 'rgba(255,255,255,0.95)' : 'rgba(255,220,235,0.5)';
+
+                var tickerHtml = '<a href="https://kalshi.com/markets/' + encodeURIComponent(pos.ticker)
+                    + '" target="_blank" rel="noopener" style="color:indianred;text-decoration:none;">'
+                    + escHtml(pos.ticker) + '</a>';
+
+                tr.innerHTML = '<td style="padding:12px 16px;font-size:14px;">' + tickerHtml + '</td>'
+                    + '<td style="padding:12px 16px;text-align:center;font-weight:bold;color:' + sideColor + ';">' + side + '</td>'
+                    + '<td style="padding:12px 16px;text-align:right;">' + contracts + '</td>'
+                    + '<td style="padding:12px 16px;text-align:right;">' + (value != null ? '$' + value : '—') + '</td>'
+                    + '<td style="padding:12px 16px;text-align:right;color:' + pnlColor + ';">' + (pnl != null ? '$' + pnl : '—') + '</td>';
+
+                tbody.appendChild(tr);
+            });
+
+            var pnlColor = totalPnl >= 0 ? '#2e7d32' : '#c62828';
+            document.getElementById('summary').innerHTML =
+                '<strong>' + positions.length + '</strong> open position' + (positions.length !== 1 ? 's' : '')
+                + ' &nbsp;|&nbsp; Total value: <strong>$' + (totalValue / 100).toFixed(2) + '</strong>'
+                + ' &nbsp;|&nbsp; Realized P&amp;L: <strong style="color:' + pnlColor + ';">$' + (totalPnl / 100).toFixed(2) + '</strong>';
+        }
+    }
+
+    function escHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    function signOut() {
+        sessionStorage.removeItem('kalshi_token');
+        showAuthSection();
+    }
+
+    function showAuthSection() {
+        document.getElementById('auth-section').style.display = 'block';
+        document.getElementById('positions-section').style.display = 'none';
+    }
+
+    function setLoading(show) {
+        document.getElementById('loading').style.display = show ? 'block' : 'none';
+    }
+
+    function showError(msg) {
+        var el = document.getElementById('auth-error');
+        el.textContent = msg;
+        el.style.display = 'block';
+    }
+
+    function clearError() {
+        document.getElementById('auth-error').style.display = 'none';
+    }
+
+    document.getElementById('login-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        clearError();
+        setLoading(true);
+        try {
+            var email = document.getElementById('kalshi-email').value;
+            var password = document.getElementById('kalshi-password').value;
+            var token = await doLogin(email, password);
+            sessionStorage.setItem('kalshi_token', token);
+            await loadPositions();
+        } catch (err) {
+            showError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    });
+
+    // Auto-load if session token already exists
+    if (sessionStorage.getItem('kalshi_token')) {
+        document.getElementById('auth-section').style.display = 'none';
+        loadPositions();
+    }
+</script>
+
+</body>
+</html>
